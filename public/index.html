@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <style>
+        /* Snackbar styles */
+        #snackbar {
+            visibility: hidden; /* Hidden by default */
+            min-width: 250px;
+            margin-left: -125px; /* Center the snackbar */
+            background-color: #333; /* Black background */
+            color: #fff; /* White text */
+            text-align: center;
+            border-radius: 5px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            font-size: 14px;
+        }
+
+        /* Show the snackbar */
+        #snackbar.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        /* Animations */
+        @keyframes fadein {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
+        }
+
+        @keyframes fadeout {
+            from { bottom: 30px; opacity: 1; }
+            to { bottom: 0; opacity: 0; }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Login</h1>
+    <form id="loginForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Login</button>
+    </form>
+    <div id="message" class="error"></div>
+    <div id="snackbar"></div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-jJN_Y2xSHP7KfCUMIHgdPZ_IZ1fz3NY",
+            authDomain: "lawapp-3ec1d.firebaseapp.com",
+            projectId: "lawapp-3ec1d",
+            storageBucket: "lawapp-3ec1d.firebasestorage.app",
+            messagingSenderId: "296571227322",
+            appId: "1:296571227322:web:10e9adadb16a42c3a54683",
+            measurementId: "G-3E49YME348"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Function to show snackbar
+        function showSnackbar(message, type = 'success') {
+            const snackbar = document.getElementById('snackbar');
+            if (!snackbar) {
+                console.error('Snackbar element not found!');
+                return;
+            }
+
+            snackbar.textContent = message;
+
+            // Set background color based on type
+            if (type === 'error') {
+                snackbar.style.backgroundColor = '#f44336'; // Red for errors
+            } else {
+                snackbar.style.backgroundColor = '#333'; // Default black for success
+            }
+
+            // Show the snackbar
+            snackbar.className = 'show';
+
+            // Hide the snackbar after 3 seconds
+            setTimeout(() => {
+                snackbar.className = snackbar.className.replace('show', '');
+            }, 3000);
+        }
+
+        // Add event listener for login form
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // Sign in with Firebase
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Get Firebase ID token
+                const idToken = await user.getIdToken();
+
+                console.log('Request Body:', { idToken }); // Log the request body
+
+                // Send ID token to backend
+                const response = await fetch('http://192.168.1.21:3000/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idToken }),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('token', data.token); // Save backend token
+                    showSnackbar('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = '/admin-dashboard';
+                    }, 3000);
+                } else {
+                    showSnackbar(data.error || 'Login failed.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+
+                // Handle Firebase-specific errors
+                if (error.code === 'auth/invalid-login-credentials') {
+                    showSnackbar('Invalid email or password.', 'error');
+                } else {
+                    showSnackbar('An unexpected error occurred.', 'error');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

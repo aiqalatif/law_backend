@@ -1,27 +1,95 @@
 const Law = require('../models/law');
+// Import the Law model
 
-// (1) Add a New Law
-exports.addLaw = async (req, res) => {
+// (1) Add Criminal Law
+exports.addCriminalLaw = async (req, res) => {
+    try {
+      const { categories } = req.body;
+  
+      if (!categories || categories.length === 0) {
+        return res.status(400).json({ message: 'At least one category is required for Criminal Law' });
+      }
+  
+      const newLaw = new Law({
+        lawType: 'Criminal Law',
+        categories,
+      });
+  
+      await newLaw.save();
+  
+      res.status(201).json({ message: 'Criminal law added successfully', law: newLaw });
+    } catch (error) {
+      console.error('Error adding criminal law:', error);
+      res.status(500).json({ message: 'Error adding criminal law', error: error.message });
+    }
+  };
+
+// (2) Add Family Law
+exports.addFamilyLaw = async (req, res) => {
   try {
-    const { lawType, categories } = req.body;
+    const { categories } = req.body;
 
-    // Validate required fields
-    if (!lawType || !categories || categories.length === 0) {
-      return res.status(400).json({ message: 'Law type and at least one category are required' });
+    if (!categories || categories.length === 0) {
+      return res.status(400).json({ message: 'At least one category is required for Family Law' });
     }
 
-    // Create new law in the database
     const newLaw = new Law({
-      lawType,
+      lawType: 'Family Law',
       categories,
     });
 
     await newLaw.save();
 
-    res.status(201).json({ message: 'Law added successfully', law: newLaw });
+    res.status(201).json({ message: 'Family law added successfully', law: newLaw });
   } catch (error) {
-    console.error('Error adding law:', error);
-    res.status(500).json({ message: 'Error adding law', error: error.message });
+    console.error('Error adding family law:', error);
+    res.status(500).json({ message: 'Error adding family law', error: error.message });
+  }
+};
+
+// (3) Add Labor Law
+exports.addLaborLaw = async (req, res) => {
+  try {
+    const { categories } = req.body;
+
+    if (!categories || categories.length === 0) {
+      return res.status(400).json({ message: 'At least one category is required for Labor Law' });
+    }
+
+    const newLaw = new Law({
+      lawType: 'Labor Law',
+      categories,
+    });
+
+    await newLaw.save();
+
+    res.status(201).json({ message: 'Labor law added successfully', law: newLaw });
+  } catch (error) {
+    console.error('Error adding labor law:', error);
+    res.status(500).json({ message: 'Error adding labor law', error: error.message });
+  }
+};
+
+// (4) Add Property Law
+exports.addPropertyLaw = async (req, res) => {
+  try {
+    const { categories } = req.body;
+
+    if (!categories || categories.length === 0) {
+      return res.status(400).json({ message: 'At least one category is required for Property Law' });
+    }
+
+    const newLaw = new Law({
+      lawType: 'Property Law',
+      categories,
+    });
+
+    await newLaw.save();
+
+    res.status(201).json({ message: 'Property law added successfully', law: newLaw });
+  } catch (error) {
+    console.error('Error adding property law:', error);
+    res.status(500).json({ message: 'Error adding property law', error: error.message });
   }
 };
 

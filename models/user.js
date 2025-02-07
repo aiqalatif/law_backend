@@ -1,42 +1,28 @@
 const mongoose = require('mongoose');
 
-// Define schema for User
-const userSchema = new mongoose.Schema({
- name: {
-    type: String,
-    required: false
-  },
 
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  phoneNumber: {
-    type: String,
-    required: false,  
-    unique: true
-  },
-  profilePhoto: {
-    type: String,  
-    required: false  
-  }, 
-  fcmToken: {
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: false },
+  email: { type: String, required: true, unique: true, lowercase: true },
+  password: { type: String, required: true },
+  phoneNumber: { type: String, required: false },
+  profilePhoto: { type: String, required: false },
+  fcmToken: { type: String, required: false },
+  role: { 
     type: String, 
-    required: true,
-    unique: true,
+    enum: ['admin', 'client', 'lawyer'], 
+    required: true 
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
+  isVerified: { type: Boolean, default: false }, // Firebase email verification status
+  lawyerProfile: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Lawyer', // Reference to the Lawyer schema
+    required: false 
+  },
+  createdAt: { type: Date, default: Date.now },
 });
 
 
-const User = mongoose.model('User', userSchema);
 
+const User = mongoose.model('User', userSchema);
 module.exports = User;
