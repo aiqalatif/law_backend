@@ -73,8 +73,9 @@ exports.addLaborLaw = async (req, res) => {
 // (4) Add Property Law
 exports.addPropertyLaw = async (req, res) => {
   try {
+   
     const { categories } = req.body;
-
+    console.log("Categories:", categories);
     if (!categories || categories.length === 0) {
       return res.status(400).json({ message: 'At least one category is required for Property Law' });
     }

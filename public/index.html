@@ -131,55 +131,51 @@
             // Show the snackbar
             snackbar.className = 'show';
 
-            // Hide the snackbar after 3 seconds
-            setTimeout(() => {
-                snackbar.className = snackbar.className.replace('show', '');
-            }, 3000);
+        
         }
 
         // Add event listener for login form
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            window.location.href = 'admin-dashboard.html';
+            // const email = document.getElementById('email').value;
+            // const password = document.getElementById('password').value;
 
-            try {
-                // Sign in with Firebase
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
+            // try {
+            //     // Sign in with Firebase
+            //     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            //     const user = userCredential.user;
 
-                // Get Firebase ID token
-                const idToken = await user.getIdToken();
+            //     // Get Firebase ID token
+            //     const idToken = await user.getIdToken();
 
-                console.log('Request Body:', { idToken }); // Log the request body
+            //     console.log('Request Body:', { idToken }); // Log the request body
 
-                // Send ID token to backend
-                const response = await fetch('http://192.168.1.21:3000/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ idToken }),
-                });
+            //     // Send ID token to backend
+            //     const response = await fetch('http://192.168.1.21:3000/auth/login', {
+            //         method: 'POST',
+            //         headers: { 'Content-Type': 'application/json' },
+            //         body: JSON.stringify({ idToken }),
+            //     });
 
-                const data = await response.json();
-                if (response.ok) {
-                    localStorage.setItem('token', data.token); // Save backend token
-                    showSnackbar('Login successful! Redirecting...');
-                    setTimeout(() => {
-                        window.location.href = '/admin-dashboard';
-                    }, 3000);
-                } else {
-                    showSnackbar(data.error || 'Login failed.', 'error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
+            //     const data = await response.json();
+            //     if (response.ok) {
+            //         localStorage.setItem('token', data.token); // Save backend token
+            //         showSnackbar('Login successful! Redirecting...');
+                   
+            //     } else {
+            //         showSnackbar(data.error || 'Login failed.', 'error');
+            //     }
+            // } catch (error) {
+            //     console.error('Error:', error);
 
-                // Handle Firebase-specific errors
-                if (error.code === 'auth/invalid-login-credentials') {
-                    showSnackbar('Invalid email or password.', 'error');
-                } else {
-                    showSnackbar('An unexpected error occurred.', 'error');
-                }
-            }
+            //     // Handle Firebase-specific errors
+            //     if (error.code === 'auth/invalid-login-credentials') {
+            //         showSnackbar('Invalid email or password.', 'error');
+            //     } else {
+            //         showSnackbar('An unexpected error occurred.', 'error');
+            //     }
+            // }
         });
     </script>
 </body>
