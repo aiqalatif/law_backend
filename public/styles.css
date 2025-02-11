@@ -8,7 +8,7 @@ body {
     height: 100vh;
 }
 
-/* Sidebar (Drawer) */
+/* Sidebar */
 .drawer {
     width: 250px;
     background: #333;
@@ -19,6 +19,11 @@ body {
     left: 0;
     top: 0;
     overflow-y: auto;
+    transition: width 0.3s ease; /* Smooth animation */
+}
+
+.drawer.collapsed {
+    width: 60px; /* Collapsed width */
 }
 
 .drawer-header {
@@ -26,6 +31,9 @@ body {
     padding: 10px;
     font-size: 1.2em;
     border-bottom: 1px solid #555;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .drawer nav ul {
@@ -37,6 +45,16 @@ body {
     padding: 15px;
     border-bottom: 1px solid #444;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.drawer nav ul li i {
+    margin-right: 10px;
+}
+
+.drawer.collapsed .label {
+    display: none; /* Hide labels when collapsed */
 }
 
 /* Main Content */
@@ -47,10 +65,12 @@ body {
     background: white;
     height: 100vh;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
+    transition: margin-left 0.3s ease; /* Smooth animation */
 }
 
+.drawer.collapsed + .main-container {
+    margin-left: 60px; /* Adjust margin when sidebar is collapsed */
+}
 /* Page Visibility */
 .page {
     display: none;
@@ -58,23 +78,4 @@ body {
 
 .page.active {
     display: block;
-}
-
-/* Category Navigation */
-.category-nav {
-    margin-bottom: 20px;
-}
-
-.category-nav button {
-    padding: 10px;
-    margin: 5px;
-    cursor: pointer;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px;
-}
-
-.category-nav button:hover {
-    background-color: #0056b3;
 }

@@ -37,7 +37,7 @@ mongoose.connect(dbUri, {
 
 // Use the authentication routes
 app.use('/auth', authRoutes);  // Mount the auth routes under /auth endpoint
-app.use('api/laws', lawRoutes);
+app.use('/laws', lawRoutes);
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });

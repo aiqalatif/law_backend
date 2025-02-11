@@ -3,36 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Dynamic Navigation with Drawer</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-
-    <!-- Sidebar (Drawer) -->
-    <aside class="drawer">
+    <!-- Sidebar -->
+    <aside class="drawer" id="drawer">
         <div class="drawer-header">
             <h2>Admin Panel</h2>
+            <button id="toggleDrawer"><i class="fa-solid fa-bars"></i></button>
         </div>
         <nav>
             <ul>
-                <li onclick="showPage('admin-dashboard.html')"><i class="fa-solid fa-chart-line"></i> Dashboard</li>
-                <li onclick="showPage('detail-law.html')"><i class="fa-solid fa-gavel"></i> Enter Law</li>
-
-
-                <li onclick="showPage('settings')"><i class="fa-solid fa-cog"></i> Settings</li>
+                <li onclick="loadPage('detail-law.html')">
+                    <i class="fa-solid fa-gavel"></i>
+                    <span class="label">Enter Law</span>
+                </li>
             </ul>
         </nav>
     </aside>
 
     <!-- Main Content -->
-    <main class="main-container">
-        <div id="dashboard" class="page active">
-            <h1>Dashboard</h1>
-            <p>Welcome to the Admin Dashboard.</p>
+    <main class="main-container" id="mainContainer">
+        <!-- Dynamic Content Area -->
+        <div id="dynamic-content">
+            <h2>Welcome to the Admin Panel</h2>
+            <p>Please select "Enter Law" from the sidebar to proceed.</p>
         </div>
-
-       
     </main>
 
     <script src="script.js"></script>

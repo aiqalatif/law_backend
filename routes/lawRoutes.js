@@ -12,7 +12,7 @@ router.delete('/delete-law/:id', lawController.deleteLaw); // Delete law
 router.post('/add-criminal-law', lawController.addCriminalLaw);      
 router.post('/add-family-law', lawController.addFamilyLaw);          
 
-router.post('/add-labor-law', lawController.addLaborLaw);            
+         
 
 router.post('/add-property-law', lawController.addPropertyLaw);  
 module.exports = router;
