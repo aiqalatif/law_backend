@@ -1,20 +1,13 @@
 const mongoose = require('mongoose');
 
 const lawyerSchema = new mongoose.Schema({
-  firstName: {
+  name: {
     type: String,
     required: true,
   },
-  lastName: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-  },
+  email: { type: String, required: true,
+     unique: true, lowercase: true },
+
   phone: {
     type: String,
     required: true,
@@ -24,29 +17,76 @@ const lawyerSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  licenseIssuingAuthority: {
+    type: String,
+    required: true,
+  },
   licenseExpiryDate: {
     type: Date,
     required: true,
   },
+  experienceYears: {
+    type: Number,
+    required: true,
+  },
   specialties: {
     type: [String],  
-    required: true,
+    required: false,
   },
   officeAddress: {
     type: String,
+    required: true,
+  },
+ 
+
+  workingHours: {
+    type: String, 
+    required: false, 
+  },
+  languagesSpoken: {
+    type: [String], 
     required: true,
   },
   profilePicture: {
     type: String,  
     required: false,
   },
+  barCouncilIDCard: {
+    type: String,  
+    required: true, 
+  },
+  cnic: {
+    type: String,  
+    required: false, 
+  },
+  isAvailableForOnlineConsultation: {
+    type: Boolean,
+    default: false, 
+  },
+  licenseIssuingDate: {  // ✅ Added this field
+    type: Date,
+    required: true,
+  },
+  consultationFee: {
+    type: Number, 
+    required: false, 
+  },
+  paymentDetails: {
+    type: String,
+    required: false, 
+  },
   isEmailVerified: {
     type: Boolean,
-    default: false,  // Initially false
+    default: false,
   },
   isApproved: {
     type: Boolean,
-    default: false,  // Initially false
+    default: false,
+  },
+  
+  caseSuccessRate: {
+    type: Number,
+    required: false, 
   },
   createdAt: {
     type: Date,

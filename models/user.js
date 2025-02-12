@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     ref: 'Lawyer', // Reference to the Lawyer schema
     required: false 
   },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now },        
 });
 
 

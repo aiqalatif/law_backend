@@ -1,17 +1,18 @@
-/* General Styles */
+/* Global Styling */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #f8f8f8;
     display: flex;
     height: 100vh;
+    transition: background-color 0.3s ease;
 }
 
 /* Sidebar */
 .drawer {
-    width: 250px;
-    background: #333;
+    width: 260px;
+    background: #2c3e50; /* Dark navy shade */
     color: white;
     padding-top: 20px;
     height: 100vh;
@@ -19,18 +20,19 @@ body {
     left: 0;
     top: 0;
     overflow-y: auto;
-    transition: width 0.3s ease; /* Smooth animation */
+    transition: width 0.3s ease-in-out;
+    box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .drawer.collapsed {
-    width: 60px; /* Collapsed width */
+    width: 65px;
 }
 
 .drawer-header {
     text-align: center;
-    padding: 10px;
-    font-size: 1.2em;
-    border-bottom: 1px solid #555;
+    padding: 12px;
+    font-size: 1.3em;
+    border-bottom: 1px solid #34495e;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -42,15 +44,21 @@ body {
 }
 
 .drawer nav ul li {
-    padding: 15px;
-    border-bottom: 1px solid #444;
+    padding: 15px 20px;
+    border-bottom: 1px solid #34495e;
     cursor: pointer;
     display: flex;
     align-items: center;
+    transition: background 0.3s ease;
+}
+
+.drawer nav ul li:hover {
+    background: #1abc9c; /* Stylish green hover */
 }
 
 .drawer nav ul li i {
-    margin-right: 10px;
+    margin-right: 15px;
+    font-size: 18px;
 }
 
 .drawer.collapsed .label {
@@ -59,23 +67,151 @@ body {
 
 /* Main Content */
 .main-container {
-    margin-left: 250px; /* Sidebar ke baad space dene ke liye */
-    padding: 20px;
+    margin-left: 260px;
+    padding: 25px;
     flex-grow: 1;
     background: white;
     height: 100vh;
     overflow-y: auto;
-    transition: margin-left 0.3s ease; /* Smooth animation */
+    transition: margin-left 0.3s ease-in-out;
 }
 
 .drawer.collapsed + .main-container {
-    margin-left: 60px; /* Adjust margin when sidebar is collapsed */
+    margin-left: 65px;
 }
+
 /* Page Visibility */
 .page {
     display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .page.active {
     display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Category Navigation */
+.category-nav {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.category-nav button {
+    background: #3498db; /* Blue buttons */
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.category-nav button:hover {
+    background: #2980b9; /* Darker blue hover effect */
+}
+/* TABLE INPUT FIELDS */
+table input[type="text"], table textarea {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #247ba0;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+table input:focus, table textarea:focus {
+    border-color: #1b5d7d;
+    box-shadow: 0 0 5px rgba(36, 123, 160, 0.5);
+}
+
+/* DELETE BUTTON */
+.delete-row-btn {
+    background: #d9534f;
+    color: white;
+    font-size: 14px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.delete-row-btn:hover {
+    background: #c9302c;
+}
+
+/* GENERAL TABLE BUTTONS */
+#add-row-btn, #submit-famliy-law-btn {
+    background: #247ba0;
+    color: white;
+    font-size: 16px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    margin-top: 10px;
+}
+
+#add-row-btn:hover, #submit-famliy-law-btn:hover {
+    background: #1b5d7d;
+}
+
+/* BUTTON CONTAINER */
+.button-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* SUBMIT BUTTON */
+#submit-criminal-law-btn {
+    background: #1b5d7d;  /* Green color for submission */
+    color: white;
+    font-size: 16px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    margin-top: 10px;
+}
+
+#submit-criminal-law-btn:hover {
+    background: #1e8449;
+}
+label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2c3e50; /* Dark grayish blue */
+    display: block;
+    margin-bottom: 8px;
+}
+
+#categoryName {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    border: 2px solid #3498db; /* Bright blue border */
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #ecf0f1; /* Light gray background */
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    display: block;
+    margin-bottom: 15px;
+}
+
+#categoryName:focus {
+    border-color: #2980b9; /* Darker blue on focus */
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.4);
+    background-color: white;
 }
