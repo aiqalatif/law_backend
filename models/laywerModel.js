@@ -79,9 +79,10 @@ const lawyerSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  isApproved: {
-    type: Boolean,
-    default: false,
+  approvalStatus: {
+    type: String,
+    enum: ["pending", "verified", "rejected", "formIncomplete"],
+    default: "pending", 
   },
   
   caseSuccessRate: {

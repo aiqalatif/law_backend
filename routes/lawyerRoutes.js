@@ -13,4 +13,8 @@ const lawyerController = require('../controllers/lawyerController');
 // Approve lawyer route
 router.put('/approve/:id',authMiddleware, lawyerController.approveLawyer);
 
+router.get('/profile/:email', lawyerController.lawyerprofile);
+
+
+
  module.exports =  router;

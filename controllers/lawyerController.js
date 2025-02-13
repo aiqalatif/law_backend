@@ -6,7 +6,7 @@ async CreateProfile(req,res){
 const { name,phone,licenseNumber,licenseIssuingAuthority,
     licenseExpiryDate,experienceYears,specialties,
     officeAddress,workingHours,languagesSpoken,profilePicture,
-    barCouncilIDCard,cnic,isEmailVerified,isApproved,
+    barCouncilIDCard,cnic,isEmailVerified,approvalStatus,
     caseSuccessRate,email,licenseIssuingDate,
 }=req.body;
 try{
@@ -16,7 +16,7 @@ try{
       email,  name,phone,licenseNumber,licenseIssuingAuthority,
         licenseExpiryDate,experienceYears,specialties,
         officeAddress,workingHours,languagesSpoken,profilePicture,
-        barCouncilIDCard,cnic,isEmailVerified,isApproved,
+        barCouncilIDCard,cnic,isEmailVerified,approvalStatus,
         caseSuccessRate,licenseIssuingDate,
     });
       await   newUser.save();
@@ -31,26 +31,26 @@ try{
 }
 }
 async getPendingLawyers(req, res) {
-    try {
-      const pendingLawyers = await Lawyer.find({ isApproved: false });
-      res.status(200).json({
-        success: true,
-        lawyers: pendingLawyers
-      });
-    } catch (e) {
-      res.status(500).json({
-        success: false,
-        message: 'Error fetching pending lawyers',
-        error: e.message
-      });
-    }
+  try {
+    const pendingLawyers = await Lawyer.find({ approvalStatus: 'pending' }); // Use 'pending' as a string
+    res.status(200).json({
+      success: true,
+      lawyers: pendingLawyers
+    });
+  } catch (e) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching pending lawyers',
+      error: e.message
+    });
+  }
   }
   async approveLawyer(req, res) {
-    const { id } = req.params; // ✅ Use params instead of body
+    const { id } = req.params; 
     try {
       const lawyer = await Lawyer.findByIdAndUpdate(
         id,
-        { isApproved: true },
+        { approvalStatus: 'verified' },
         { new: true }
       );
       if (!lawyer) {
@@ -73,7 +73,7 @@ async getPendingLawyers(req, res) {
   
   async getApprovedLawyers(req, res) {
     try {
-      const approvedLawyers = await Lawyer.find({ isApproved: true });
+      const approvedLawyers = await Lawyer.find({ approvalStatus: 'verified' });
   
       res.status(200).json({
         success: true,
@@ -88,8 +88,47 @@ async getPendingLawyers(req, res) {
       });
     }
 }
+async  lawyerprofile(req, res) {
+  const { email } = req.params; // Extract email from path parameters
+  console.log("Fetching lawyer with email:", email);
 
-  
+  try {
+    // Fetch the lawyer's profile from the database
+    const lawyer = await Lawyer.findOne({ email });
 
+    if (!lawyer) {
+      return res.status(404).json({ success: false, error: 'Lawyer not found.' });
+    }
+
+    // Return the lawyer's profile details
+    res.status(200).json({
+      success: true,
+      profile: {
+        name: lawyer.name,
+        email: lawyer.email,
+        phone: lawyer.phone,
+        licenseNumber: lawyer.licenseNumber,
+        licenseIssuingAuthority: lawyer.licenseIssuingAuthority,
+        licenseIssuingDate: lawyer.licenseIssuingDate,
+        licenseExpiryDate: lawyer.licenseExpiryDate,
+        experienceYears: lawyer.experienceYears,
+        specialties: lawyer.specialties,
+        officeAddress: lawyer.officeAddress,
+        workingHours: lawyer.workingHours,
+        languagesSpoken: lawyer.languagesSpoken,
+        profilePicture: lawyer.profilePicture,
+        barCouncilIDCard: lawyer.barCouncilIDCard,
+        cnic: lawyer.cnic,
+        isEmailVerified: lawyer.isEmailVerified,
+        approvalStatus: lawyer.approvalStatus,
+        caseSuccessRate: lawyer.caseSuccessRate,
+        status: lawyer.status, // Include the approval status
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching lawyer profile:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch profile.' });
+  }
+}
 }
 module.exports = new LawyerController();

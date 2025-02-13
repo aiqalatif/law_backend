@@ -66,9 +66,25 @@ function setupAddRowFeature() {
 
 async function fetchPendingLawyers() {
     try {
-        // Backend se pending lawyers ki list fetch kar raha hai
-        const response = await fetch("http://localhost:3000/lawyer/pendingLawyers");
-        
+        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+
+        if (!token) {
+            console.error('No token found. Please log in.');
+            return;
+        }
+        const response = await fetch("http://localhost:3000/lawyer/pendingLawyers", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+            },
+        });
+
+        // Check if the response is successful
+        if (!response.ok) {
+            console.error('Failed to fetch pending lawyers:', response.statusText);
+            return;
+        }
         // Response ko JSON format me convert kar raha hai
         const data = await response.json();
         
@@ -189,12 +205,20 @@ function setupSubmitLawFeature() {
 // Function to approve a lawyer
 async function approveLawyer(lawyerId) {
     try {
+        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+
+        if (!token) {
+            console.error('No token found. Please log in.');
+            return;
+        }
+        console.log('Token:', token);
         const response = await fetch(`http://localhost:3000/lawyer/approve/${lawyerId}`, {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json"
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
             },
-            body: JSON.stringify({ approved: true })  
+            body: JSON.stringify({ approvalStatus: verified })  
         });
 
         const result = await response.json();
@@ -214,38 +238,58 @@ async function approveLawyer(lawyerId) {
 
 async function fetchApprovedLawyers() {
     try {
-        // Backend se pending lawyers ki list fetch kar raha hai
-        const response = await fetch("http://localhost:3000/lawyer/approved");
-        
-        // Response ko JSON format me convert kar raha hai
-        const data = await response.json();
-        
-        console.log("Fetched Lawyers:", data); // Debugging ke liye
-
-        // "lawyers" array ko extract kar raha hai
-        const lawyers = data.lawyers;
-
-        // HTML me jahan list dikhani hai usko select kar raha hai
-        const lawyerList = document.getElementById("approverLawyerList");
-        lawyerList.innerHTML = "";  // Pehle jo bhi data hai usko clear kar raha hai
-
-        // Agar koi lawyer pending nahi hai to message show karega
-        if (!lawyers.length) {
-            lawyerList.innerHTML = "<p>No Approved lawyers found.</p>";
+        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+        if (!token) {
+            console.error('No token found. Please log in.');
             return;
         }
 
-        // Har lawyer ke liye ek card create karega
+        console.log('Token:', token); // Debugging: Print the token to the console
+
+        const response = await fetch("http://localhost:3000/lawyer/approved", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+            },
+        });
+
+        if (!response.ok) {
+            console.error('Failed to fetch approved lawyers:', response.statusText);
+            return;
+        }
+
+        const data = await response.json();
+        console.log("Fetched Approved Lawyers:", data); // Debugging: Log the fetched data
+
+        if (data.error) {
+            console.error('Error from backend:', data.error);
+            return;
+        }
+
+        const lawyers = data.lawyers || [];
+        const lawyerList = document.getElementById("approverLawyerList");
+
+        if (!lawyerList) {
+            console.error('Element with ID "approverLawyerList" not found in the DOM.');
+            return;
+        }
+
+        lawyerList.innerHTML = ""; // Clear existing content
+
+        if (!lawyers.length) {
+            lawyerList.innerHTML = "<p>No approved lawyers found.</p>";
+            return;
+        }
+
         lawyers.forEach(lawyer => {
             const lawyerCard = document.createElement("div");
             lawyerCard.classList.add("lawyer-card");
 
-            // Profile Picture check karega, agar nahi hai to default avatar show karega
-            const profilePic = lawyer.profilePicture 
-                ? `<img src="${lawyer.profilePicture}" class="avatar">` 
+            const profilePic = lawyer.profilePicture
+                ? `<img src="${lawyer.profilePicture}" class="avatar">`
                 : `<div class="avatar">👤</div>`;
 
-            // Lawyer ka complete info show karega
             lawyerCard.innerHTML = `
                 ${profilePic}
                 <div class="lawyer-info">
@@ -262,14 +306,11 @@ async function fetchApprovedLawyers() {
                     <p><strong>Office Address:</strong> ${lawyer.officeAddress || "N/A"}</p>
                     <p><strong>Bar Council ID:</strong> ${lawyer.barCouncilIDCard || "N/A"}</p>
                 </div>
-                
             `;
 
-            // Lawyer card ko HTML list me add karega
             lawyerList.appendChild(lawyerCard);
         });
-
     } catch (error) {
-        console.error("Error fetching lawyers:", error);
+        console.error("Error fetching approved lawyers:", error);
     }
 }
