@@ -8,9 +8,11 @@ const port = process.env.PORT || 4000;
 const dbUri = process.env.DB_URI;
 const lawRoutes = require('./routes/lawRoutes');
 const cors = require('cors');
+const delay = require("delay");
+
 const path = require('path');
 const lawyerRoutes=require('./routes/lawyerRoutes');
-
+const { OpenAI } = require('openai');
 app.use(cors());
 app.use(express.json());  
 
@@ -22,6 +24,26 @@ const serviceAccount = require('./config/lawapp-3ec1d-firebase-adminsdk-fbsvc-98
 firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert(serviceAccount)
 });
+const prompt = 'tell me pllanties of thief in pakistan and correct my spell if any one is incorrect';
+
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY, // API key should be in .env file
+  });
+  
+  async function testOpenAI() {
+    try {
+      const response = await openai.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: "Hello!" }],
+      });
+      console.log(response);
+    } catch (error) {
+      console.error("OpenAI Error:", error);
+    }
+  }
+  
+  testOpenAI();
+
 
 // Connect to MongoDB
 mongoose.connect(dbUri, {

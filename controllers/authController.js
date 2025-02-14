@@ -17,7 +17,7 @@ const User = require('../models/user');
 class AuthController {
 
     async createUser(req, res) {
-        const { email, password, role,fcmToken } = req.body;
+        const { email, password, role,fcmToken,approvalStatus } = req.body;
       
         try {
           console.log('Creating user with email:', email); 
@@ -26,7 +26,8 @@ class AuthController {
             role,
             email,
             password,
-            fcmToken, 
+            fcmToken,
+            approvalStatus, 
             isVerified: false,
           });
       

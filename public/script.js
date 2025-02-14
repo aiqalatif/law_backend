@@ -90,14 +90,14 @@ async function fetchPendingLawyers() {
         
         console.log("Fetched Lawyers:", data); // Debugging ke liye
 
-        // "lawyers" array ko extract kar raha hai
+       
         const lawyers = data.lawyers;
 
-        // HTML me jahan list dikhani hai usko select kar raha hai
+       
         const lawyerList = document.getElementById("lawyerList");
-        lawyerList.innerHTML = "";  // Pehle jo bhi data hai usko clear kar raha hai
+        lawyerList.innerHTML = "";  
 
-        // Agar koi lawyer pending nahi hai to message show karega
+       
         if (!lawyers.length) {
             lawyerList.innerHTML = "<p>No pending lawyers found.</p>";
             return;
@@ -130,7 +130,9 @@ async function fetchPendingLawyers() {
                     <p><strong>Office Address:</strong> ${lawyer.officeAddress || "N/A"}</p>
                     <p><strong>Bar Council ID:</strong> ${lawyer.barCouncilIDCard || "N/A"}</p>
                 </div>
-                <button class="approve-btn" onclick="approveLawyer('${lawyer._id}')">Approve</button>
+                <button class="approve-btn" onclick="updateLawyerStatus('${lawyer._id}', 'verified')">Approve</button>
+                  <button class="reject-btn" onclick="updateLawyerStatus('${lawyer._id}', 'rejected')">Reject</button>
+             </div>
             `;
 
             // Lawyer card ko HTML list me add karega
@@ -203,36 +205,36 @@ function setupSubmitLawFeature() {
 }
 
 // Function to approve a lawyer
-async function approveLawyer(lawyerId) {
+async function updateLawyerStatus(lawyerId, status) {
     try {
         const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-
         if (!token) {
             console.error('No token found. Please log in.');
             return;
         }
         console.log('Token:', token);
+        console.log('status:', status);
         const response = await fetch(`http://localhost:3000/lawyer/approve/${lawyerId}`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+                'Authorization': `Bearer ${token}`,
             },
-            body: JSON.stringify({ approvalStatus: verified })  
+            body: JSON.stringify({ status }),
         });
 
         const result = await response.json();
-        console.log("Approval Result:", result);
+        console.log("Update Result:", result);
 
         if (result.success) {
-            alert("Lawyer approved successfully!");
-            fetchPendingLawyers(); // Refresh lawyer list to remove approved ones
+            alert(`Lawyer status updated to ${status} successfully!`);
+            fetchPendingLawyers(); 
         } else {
-            alert("Failed to approve lawyer!");
+            alert("Failed to update lawyer status!");
         }
     } catch (error) {
-        console.error("Error approving lawyer:", error);
-        alert("Error approving lawyer!");
+        console.error("Error updating lawyer status:", error);
+        alert("Error updating lawyer status!");
     }
 }
 

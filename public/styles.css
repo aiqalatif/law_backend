@@ -215,3 +215,16 @@ label {
     box-shadow: 0 0 8px rgba(52, 152, 219, 0.4);
     background-color: white;
 }
+.reject-btn {
+    background-color: #dc3545; /* Red color */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.reject-btn:hover {
+    background-color: #c82333; /* Darker red on hover */
+}

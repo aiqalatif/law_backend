@@ -1,7 +1,36 @@
 const Lawyer = require('../models/laywerModel');
+const nodemailer = require('nodemailer');
+require('dotenv').config();
+
+const transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+    user: process.env.EMAIL_USER, // Use environment variable
+    pass: process.env.EMAIL_PASS  // Use environment variable
+  }
+});
+
+
+async function sendEmail(to, subject, text) {
+  try {
+      const mailOptions = {
+          from: process.env.EMAIL_USER, // Sender email
+          to,                           // Receiver email
+          subject,                      // Email subject
+          text                          // Email body
+      };
+
+      const result = await transporter.sendMail(mailOptions);
+      console.log('Email sent:', result);
+  } catch (error) {
+      console.error('Error sending email:', error);
+  }
+}
+
 
 class LawyerController{
-
+ 
+ 
 async CreateProfile(req,res){
 const { name,phone,licenseNumber,licenseIssuingAuthority,
     licenseExpiryDate,experienceYears,specialties,
@@ -46,27 +75,71 @@ async getPendingLawyers(req, res) {
   }
   }
   async approveLawyer(req, res) {
-    const { id } = req.params; 
+    const { id } = req.params;
+    const { status } = req.body;
+
     try {
-      const lawyer = await Lawyer.findByIdAndUpdate(
-        id,
-        { approvalStatus: 'verified' },
-        { new: true }
-      );
-      if (!lawyer) {
-        return res.status(404).json({ success: false, message: "Lawyer not found" });
-      }
-      res.status(200).json({
-        success: true,
-        message: "Lawyer approved successfully",
-        lawyer
-      });
+        // Validate status
+        if (!['pending', 'verified', 'rejected', 'formIncomplete'].includes(status)) {
+            return res.status(400).json({ success: false, message: "Invalid status provided." });
+        }
+
+        // Update lawyer's status in the database
+        const updatedLawyer = await Lawyer.findByIdAndUpdate(
+            id,
+            { approvalStatus: status }, // Update the approvalStatus field
+            { new: true }
+        );
+
+        if (!updatedLawyer) {
+            return res.status(404).json({ success: false, message: "Lawyer not found" });
+        }
+
+        // Send email based on status
+        let emailSubject, emailBody;
+        if (status === 'verified') {
+            emailSubject = "Your Application has been Approved!";
+            emailBody = `
+Dear ${updatedLawyer.name},
+
+We are pleased to inform you that your application has been reviewed and approved. After carefully reviewing your profile details, including your license information, experience, and other credentials, we have determined that you meet all the requirements for approval.
+
+You can now access your account and start using our services. If you have any questions or need further assistance, feel free to contact our support team.
+
+Thank you for choosing us!
+
+Best regards,
+SkyByte Solution  
+`;
+        } else if (status === 'rejected') {
+            emailSubject = "Your Application has been Rejected";
+            emailBody = `
+Dear ${updatedLawyer.name},
+
+We regret to inform you that your application has been reviewed and rejected. After carefully reviewing your profile details, including your license information, experience, and other credentials, we found some issues that need to be addressed.
+
+Please contact our support team for further details or clarification regarding the rejection.
+
+Thank you for your interest in our services.
+
+Best regards,
+SkyByte Solution
+`;
+        }
+
+        // Send email to the lawyer
+        await sendEmail(updatedLawyer.email, emailSubject, emailBody);
+
+        res.status(200).json({
+            success: true,
+            message: "Lawyer status updated successfully",
+        });
     } catch (e) {
-      res.status(500).json({
-        success: false,
-        message: 'Error approving lawyer',
-        error: e.message
-      });
+        res.status(500).json({
+            success: false,
+            message: 'Error approving/rejecting lawyer',
+            error: e.message
+        });
     }
 }
 
